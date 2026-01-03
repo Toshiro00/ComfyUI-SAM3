@@ -132,6 +132,9 @@ class SAM3UnifiedModel(SAM3ModelPatcher):
         if device_to is None:
             device_to = self._offload_device
         self._video_predictor.model.to(device_to)
+        # Clear global inference states to prevent VRAM leak
+        from .sam3_lib.sam3_video_predictor import Sam3VideoPredictor
+        Sam3VideoPredictor._ALL_INFERENCE_STATES.clear()
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -187,6 +190,9 @@ class LoadSAM3Model:
                 f"Please ensure all files are properly installed in ComfyUI-SAM3/nodes/sam3_lib/\n"
                 f"Error: {e}"
             )
+
+        # Clear any leftover inference states from previous runs to prevent VRAM leak accumulation
+        Sam3VideoPredictor._ALL_INFERENCE_STATES.clear()
 
         # Get devices from ComfyUI's model management
         load_device = comfy.model_management.get_torch_device()
