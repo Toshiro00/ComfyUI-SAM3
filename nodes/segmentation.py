@@ -107,6 +107,10 @@ class SAM3Grounding:
         Returns:
             Tuple of (masks, visualization, boxes_json, scores_json)
         """
+        # Clear any leftover inference states from previous video sessions to prevent VRAM leak
+        from .sam3_lib.sam3_video_predictor import Sam3VideoPredictor
+        Sam3VideoPredictor._ALL_INFERENCE_STATES.clear()
+
         # Use ComfyUI's model management to load model to GPU
         comfy.model_management.load_models_gpu([sam3_model])
 
@@ -571,6 +575,10 @@ class SAM3Segmentation:
         """
         import json
 
+        # Clear any leftover inference states from previous video sessions to prevent VRAM leak
+        from .sam3_lib.sam3_video_predictor import Sam3VideoPredictor
+        Sam3VideoPredictor._ALL_INFERENCE_STATES.clear()
+
         # Use ComfyUI's model management to load model to GPU
         comfy.model_management.load_models_gpu([sam3_model])
 
@@ -820,6 +828,10 @@ class SAM3MultipromptSegmentation:
             Tuple of (masks batch, visualization)
         """
         import json
+
+        # Clear any leftover inference states from previous video sessions to prevent VRAM leak
+        from .sam3_lib.sam3_video_predictor import Sam3VideoPredictor
+        Sam3VideoPredictor._ALL_INFERENCE_STATES.clear()
 
         # Use ComfyUI's model management to load model to GPU
         comfy.model_management.load_models_gpu([sam3_model])
